@@ -4,7 +4,7 @@ from modules.sys.models.user_role_power import User
 
 login_manager = LoginManager()
 
-login_manager.login_view = 'passport.login'
+login_manager.login_view = 'sys.PasswordView:login'
 
 
 # login_manager.login_message = u'请登录以访问此页面'

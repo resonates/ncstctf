@@ -1,5 +1,9 @@
+import random
+
 from flask import current_app, jsonify
 
+from common.auth import login_required
+from common.extend.cache import get_cache
 from common.utils.tree import make_menu_tree
 from common.view import View, route
 
@@ -8,8 +12,16 @@ class IndexView(View):
     route_base = '/'
     template_base = '/sys/'
 
+    @route('/test')
+    def test(self):
+        ab = random.random()
+        print(ab)
+        get_cache().set('a', ab)
+        a = get_cache().get("a")
+        return str(a)
+
     @route('/')
-    # @login_required
+    @login_required
     def index(self):
         user = '4'
         # user = current_user
@@ -30,7 +42,7 @@ class IndexView(View):
             # 菜单配置
         }, menu={
             # 菜单数据来源
-            "data": "/rights/menu",
+            "data": "/menu",
             "collaspe": False,
             # 是否同时只打开一个菜单目录
             "accordion": True,

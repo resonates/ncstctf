@@ -12,8 +12,7 @@ cacher: dict = {
     'simple': SimpleCache,
     'uwsgi': UWSGICache
 }
-cache = RedisCache()
 
 
 def get_cache():
-    return cache.get(current_app.config.get("CACHE_TYPE") or "filesystem")()
+    return cacher.get(current_app.config.get("CACHE_TYPE"))('./')

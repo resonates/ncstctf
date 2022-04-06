@@ -2,7 +2,7 @@ from flask import Flask
 
 from common.extend.celeryer import register_celery
 from common.extend.limit import limiter
-from common.extend.loin import login_manager
+from common.extend.login import login_manager
 from common.extend.orm import db
 from common.extend.migrate import migrate
 
