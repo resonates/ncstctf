@@ -36,7 +36,7 @@ class IndexView(View):
     def configs(self):
         return dict(logo={
             # 网站名称
-            "title": current_app.config.get("SYSTEM_NAME"),
+            "title": "ncst ctf",
             # 网站图标
             "image": "/static/admin/admin/images/logo.png"
             # 菜单配置

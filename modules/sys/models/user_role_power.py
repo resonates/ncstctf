@@ -1,7 +1,8 @@
 import datetime
 from flask_login import UserMixin
+from flask_marshmallow import Marshmallow
+from marshmallow import fields
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from common.model import BaseModel, Column, Integer, String, DateTime, relationship, SQLAlchemyAutoSchema, backref, \
     ForeignKey, Table
 
@@ -35,12 +36,33 @@ class Power(BaseModel):
     enable = Column(Integer, comment='是否开启')
 
 
-class PowerOutSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Power
-        include_fk = True
-        load_instance = True
+# 权限models序列化类
+class PowerOutSchema(Marshmallow().Schema):
+    id = fields.Integer()
+    title = fields.Str(attribute="name")
+    type = fields.Str()
+    code = fields.Str()
+    href = fields.Str(attribute="url")
+    openType = fields.Str(attribute="open_type")
+    parent_id = fields.Integer()
+    icon = fields.Str()
+    sort = fields.Integer()
+    create_time = fields.DateTime()
+    update_time = fields.DateTime()
+    enable = fields.Integer()
 
+class PowerOutSchema2(Marshmallow().Schema):  # 序列化类
+    powerId = fields.Str(attribute="id")
+    powerName = fields.Str(attribute="name")
+    powerType = fields.Str(attribute="type")
+    powerUrl = fields.Str(attribute="url")
+    openType = fields.Str(attribute="open_type")
+    parentId = fields.Str(attribute="parent_id")
+    icon = fields.Str()
+    sort = fields.Integer()
+    create_time = fields.DateTime()
+    update_time = fields.DateTime()
+    enable = fields.Integer()
 
 class Role(BaseModel):
     __tablename__ = 'sys_role'

@@ -81,15 +81,15 @@
     let $ = layui.jquery
     let popup = layui.popup
 
-    let MODULE_PATH = '/admin/role/'
+    let MODULE_PATH = '/role/'
 
     let cols = [
       [
         {% if auth("admin:role:remove") %}
           { type: 'checkbox' },
         {% endif %}
-        { title: '角色名', field: 'roleName', align: 'center', width: 100 },
-        { title: 'Key值', field: 'roleCode', align: 'center' },
+        { title: '角色名', field: 'name', align: 'center', width: 100 },
+        { title: 'Key值', field: 'code', align: 'center' },
         { title: '描述', field: 'details', align: 'center' },
         { title: '是否可用', field: 'enable', align: 'center', templet: '#role-enable' },
         { title: '排序', field: 'sort', align: 'center' },

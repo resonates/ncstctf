@@ -78,10 +78,10 @@ class UserView(View):
         data, total = db.session.query(
             User.id,
             User.username,
+            User.realname,
             Dept.dept_name
-        ).filter(
-            User.dept_id == Dept.id
-        ).layui_paginate_db_json()
+        ).join(Dept,
+            User.dept_id == Dept.id ).layui_paginate_db_json()
         # 返回api
         return self.TableApi(data=data, count=total)
 
@@ -160,15 +160,15 @@ class UserView(View):
 
         db.session.commit()
         return self.success_api(msg="更新成功")
-
-    # 个人中心
-    @route('/center')
-    # @login_required
-    def center(self):
-        user_info = current_user
-        user_logs = AdminLog.query.filter_by(url='/passport/login').filter_by(uid=current_user.id).order_by(
-            desc(AdminLog.create_time)).limit(10)
-        return render_template('admin/user/center.html', user_info=user_info, user_logs=user_logs)
+    #
+    # # 个人中心
+    # @route('/center')
+    # # @login_required
+    # def center(self):
+    #     user_info = current_user
+    #     user_logs = AdminLog.query.filter_by(url='/passport/login').filter_by(uid=current_user.id).order_by(
+    #         desc(AdminLog.create_time)).limit(10)
+    #     return render_template('admin/user/center.html', user_info=user_info, user_logs=user_logs)
 
     # 修改头像
     @route('/profile')

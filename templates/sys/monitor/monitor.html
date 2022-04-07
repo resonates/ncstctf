@@ -372,7 +372,7 @@
 
         function ajaxPolling() {
             $.ajax({
-                url: "/admin/monitor/polling",
+                url: "/monitor/polling",
                 success: function (data) {
                     echartData.push({
                         name: data.time_now,

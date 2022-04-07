@@ -32,13 +32,13 @@
 </div>
 
 <script type="text/html" id="power-toolbar">
-    {% if authorize("admin:power:add") %}
+    {% if auth("admin:power:add") %}
         <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
             <i class="layui-icon layui-icon-add-1"></i>
             新增
         </button>
     {% endif %}
-    {% if authorize("admin:role:remove") %}
+    {% if auth("admin:role:remove") %}
         <button class="pear-btn pear-btn-md" lay-event="batchRemove">
             <i class="layui-icon layui-icon-delete"></i>
             删除
@@ -47,12 +47,12 @@
 </script>
 
 <script type="text/html" id="power-bar">
-    {% if authorize("admin:role:edit") %}
+    {% if auth("admin:role:edit") %}
         <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
                 class="layui-icon layui-icon-edit"></i>
         </button>
     {% endif %}
-    {% if authorize("admin:role:remove") %}
+    {% if auth("admin:role:remove") %}
         <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
                 class="layui-icon layui-icon-delete"></i>
         </button>
@@ -92,7 +92,7 @@
     let treetable = layui.treetable
     let popup = layui.popup
 
-    let MODULE_PATH = '/admin/power/'
+    let MODULE_PATH = '/power/'
 
     window.render = function () {
       treetable.render({
@@ -105,11 +105,11 @@
         treeDefaultClose: true,
         toolbar: '#power-toolbar',
         elem: '#power-table',
-        url: '/admin/power/data',
+        url: '/power/data',
         page: false,
         cols: [
           [
-            {% if authorize("admin:role:remove") %}
+            {% if auth("admin:role:remove") %}
               { type: 'checkbox' },
             {% endif %}
             { field: 'powerName', minWidth: 200, title: '权限名称' },
@@ -180,7 +180,7 @@
       }
       let loading = layer.load()
       $.ajax({
-        url: '/admin/power/' + operate,
+        url: '/power/' + operate,
         data: JSON.stringify({ powerId: this.value }),
         dataType: 'json',
         contentType: 'application/json',

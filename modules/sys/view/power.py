@@ -5,7 +5,7 @@ from common.extend.orm import db
 from common.response import SuccessApi, FailApi
 from common.validate import xss_escape
 from common.view import View, route
-from modules.sys.models.user_role_power import Power, PowerOutSchema
+from modules.sys.models.user_role_power import Power, PowerOutSchema2
 
 
 class PowerView(View):
@@ -17,12 +17,14 @@ class PowerView(View):
     def index(self):
         return self.render('main')
 
-    @route('/data', methods=['post'])
+    @route('/data',methods=['post'])
     # @authorize("admin:power:main", log=True)
     def data(self):
-        power = Power.query.all()
+        power = Power.query.all_json(PowerOutSchema2)
+        print(power)
         res = {
-            "data": self.serialize(schema=PowerOutSchema, data=power)
+            "code": 0,
+            "data": power
         }
         return jsonify(res)
 
@@ -34,12 +36,11 @@ class PowerView(View):
     @route('/selectParent')
     # @authorize("admin:power:main", log=True)
     def select_parent(self):
-        power = Power.query.all()
-        res = self.serialize(schema=PowerOutSchema, data=power)
-        res.append({"powerId": 0, "powerName": "顶级权限", "parentId": -1})
+        power = Power.query.all_json(PowerOutSchema2)
+        power.append({"powerId": 0, "powerName": "顶级权限", "parentId": -1})
         res = {
             "status": {"code": 200, "message": "默认"},
-            "data": res
+            "data": power
 
         }
         return jsonify(res)
@@ -59,10 +60,12 @@ class PowerView(View):
             sort=xss_escape(request.json.get("sort")),
             enable=1
         )
+        print(power)
         r = db.session.add(power)
+        print(r)
 
         if not r:
-            return FailApi(msg="失败")
+            return self.fail_api(msg="失败")
 
         db.session.commit()
         return SuccessApi(msg="成功")
