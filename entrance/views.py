@@ -1,3 +1,4 @@
+from modules.sys.view.subject import SubjectView
 from modules.sys.view.user import UserView
 from modules.sys.view.index import IndexView
 from modules.sys.view.role import RoleView
@@ -18,5 +19,6 @@ sys_view_lists: list = [
     PowerView,
     MonitorView,
     LogView,
-    DictView,FileView
+    DictView, FileView,
+    SubjectView
 ]

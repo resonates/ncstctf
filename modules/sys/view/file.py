@@ -44,15 +44,16 @@ class FileView(View):
         if 'file' in request.files:
             file = request.files['file']
             mime = request.files['file'].content_type
+            size = request.files['file'].content_length
 
             file_url = get_uploader().upload(filename=file.filename, file_obj=file.stream)
 
             db.session.add(
                 File(
                     name=file.filename,
-                    href='/static/upload/'+file_url,
+                    href='/static/upload/' + file_url,
                     mime=mime,
-                    size=0
+                    size=size
                 )
             )
             db.session.commit()
@@ -66,6 +67,18 @@ class FileView(View):
 
             }
         return jsonify(res)
+
+    @route('/delete', methods=['GET', 'POST'])
+    # @authorize("admin:file:delete", log=True)
+    def delete(self):
+        _id = request.form.get('id')
+        file = File.query.filter_by(id=_id).first()
+        res = get_uploader().delete(filename=file.href.replace('/static/upload/',''))
+        file.delete()
+        if res:
+            return self.success_api(msg="删除成功")
+        else:
+            return self.fail_api(msg="删除失败")
 
 # return fail_api()
 #

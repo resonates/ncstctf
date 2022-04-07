@@ -62,13 +62,8 @@ class PowerView(View):
         )
         print(power)
         r = db.session.add(power)
-        print(r)
-
-        if not r:
-            return self.fail_api(msg="失败")
-
         db.session.commit()
-        return SuccessApi(msg="成功")
+        return self.success_api(msg="成功")
 
     # 权限编辑
     @route('/edit/<int:_id>')
@@ -99,9 +94,9 @@ class PowerView(View):
         res = Power.query.filter_by(id=request.json.get("powerId")).update(data)
 
         if not res:
-            return FailApi(msg="更新权限失败")
+            return self.fail_api(msg="更新权限失败")
         db.session.commit()
-        return SuccessApi(msg="更新权限成功")
+        return self.success_api(msg="更新权限成功")
 
     # 启用权限
     @route('/enable', methods=['put'])
@@ -124,7 +119,7 @@ class PowerView(View):
             return FailApi(msg="出错啦")
 
     # 权限删除
-    @route('/remove/<int:id>', methods=['delete'])
+    @route('/remove/<int:_id>', methods=['delete'])
     # @authorize("admin:power:remove", log=True)
     def remove(self, _id):
         power = Power.query.filter_by(id=_id).first()
@@ -133,9 +128,9 @@ class PowerView(View):
         r = Power.query.filter_by(id=_id).delete()
         db.session.commit()
         if r:
-            return SuccessApi(msg="删除成功")
+            return self.success_api(msg="删除成功")
         else:
-            return FailApi(msg="删除失败")
+            return self.fail_api(msg="删除失败")
 
     # 批量删除
     @route('/batchRemove')

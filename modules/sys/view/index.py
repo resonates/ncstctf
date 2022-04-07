@@ -68,7 +68,7 @@ class IndexView(View):
                 # 标识 ID , 建议与菜单项中的 ID 一致
                 "id": "10",
                 # 页面地址
-                "href": "/admin/welcome",
+                "href": "/welcome",
                 # 标题
                 "title": "首页"
             }
