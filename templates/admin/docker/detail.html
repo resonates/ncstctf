@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>角色新增</title>
+    {% include 'admin/common/header.html' %}</head>
+<body>
+
+<div class="mainBox">
+    <div class="main-container">
+        <div class="layui-card">
+            <div class="layui-card-header">主机信息</div>
+            <div class="layui-card-body">
+                <table class="layui-table" lay-skin="line">
+                    <thead>
+                    <tr>
+                        <th>属性</th>
+                        <th>值</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>名称</td>
+                        <td>{{ data.name }}</td>
+                    </tr>
+                     <tr>
+                        <td>docker api</td>
+                        <td>{{ data.docker_api }}</td>
+                    </tr>
+                      <tr>
+                        <td>ip</td>
+                        <td>{{ data.ip }}</td>
+                    </tr>
+                       <tr>
+                        <td>备注</td>
+                        <td>{{ data.remark }}</td>
+                    </tr>
+                    <tr>
+                        <td>系统</td>
+                        <td>{{ data.info.system }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>容器个数（运行+未运行）</td>
+                        <td>{{ data.info.containers }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>镜像个数</td>
+                        <td>{{ data.info.images }}</td>
+                    </tr>
+                     <tr>
+                        <td>cpu个数</td>
+                        <td>{{ data.info.cpu }}</td>
+                    </tr>
+
+
+                      <tr>
+                        <td>内存</td>
+                        <td>{{ data.info.memory }}</td>
+                    </tr>
+                       <tr>
+                        <td>系统时间</td>
+                        <td>{{ data.info.system_time }}</td>
+                    </tr>
+                      <tr>
+                        <td>系统版本</td>
+                        <td>{{ data.info.version }}</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,8 @@ from applications.view.admin.role import admin_role
 from applications.view.admin.user import admin_user
 from applications.view.admin.monitor import admin_monitor_bp
 from applications.view.admin.task import admin_task
+from applications.view.admin.docker import docker_bp
+from applications.view.admin.timu import timu_bp
 
 
 def register_admin_views(app: Flask):
@@ -21,3 +23,6 @@ def register_admin_views(app: Flask):
     app.register_blueprint(admin_role)
     app.register_blueprint(admin_dict)
     app.register_blueprint(admin_task)
+    app.register_blueprint(docker_bp)
+    app.register_blueprint(timu_bp)
+
