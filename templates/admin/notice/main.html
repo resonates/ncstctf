@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>题库 管理</title>
+    <title>用户管理</title>
     {% include 'admin/common/header.html' %}</head>
 <body class="pear-container">
 <div class="layui-card">
     <div class="layui-card-body">
         <form class="layui-form" action="">
             <div class="layui-form-item">
-                <label class="layui-form-label">设备名</label>
+                <label class="layui-form-label">角色名</label>
                 <div class="layui-input-inline">
                     <input type="text" name="roleName" placeholder="" class="layui-input">
                 </div>
@@ -56,17 +56,11 @@
                 class="layui-icon layui-icon-edit"></i>
         </button>
     {% endif %}
-
-    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="detail"><i
-            class="layui-icon layui-icon-edit"></i>
-    </button>
-    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="images"><i
-            class="layui-icon layui-icon-table"></i>
-    </button>
-
-    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="container"><i
-            class="layui-icon layui-icon-spread-left"></i>
-    </button>
+    {% if authorize("admin:role:power") %}
+        <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="power"><i
+                class="layui-icon layui-icon-vercode"></i>
+        </button>
+    {% endif %}
     {% if authorize("admin:role:remove") %}
         <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
                 class="layui-icon layui-icon-delete"></i>
@@ -74,12 +68,9 @@
     {% endif %}
 </script>
 
-<script type="text/html" id="docker-enable">
-    {{ '{{#if (d.is_online==true) { }}
-    <span style="color: blue">在线</span>
-    {{# }else if(d.is_online == false){ }}
-    <span style="color: gray">离线</span>
-    {{# } }}'|safe }}
+<script type="text/html" id="role-enable">
+    <input type="checkbox" name="enable" value="{{ "{{d.id}}" }}" lay-skin="switch" lay-text="启用|禁用"
+           lay-filter="role-enable" {{ "{{# if(d.active){ }} checked {{# } }}" }}>
 </script>
 {% include 'admin/common/footer.html' %}
 <script>
@@ -89,20 +80,19 @@
         let $ = layui.jquery
         let popup = layui.popup
 
-        let MODULE_PATH = '/tiku/'
+        let MODULE_PATH = '/admin/notice/'
 
         let cols = [
             [
                 {% if authorize("admin:role:remove") %}
                     {type: 'checkbox'},
                 {% endif %}
-                {title: 'id', field: 'id', align: 'center'},
-                {title: '名称', field: 'name', align: 'center', width: 100},
-                {title: 'docker api', field: 'docker_api', align: 'center'},
-                {title: 'ip', field: 'ip', align: 'center'},
-                {title: '是否在线', field: 'is_online', align: 'center', templet: '#docker-enable'},
-                {title: '备注', field: 'remark', align: 'center'},
-                {title: '操作', toolbar: '#role-bar', align: 'center', width: 250}
+                {title: 'id', field: 'id', align: 'center', width: 100},
+                {title: '是否可用', field: 'active', align: 'center', templet: '#role-enable'},
+                {title: '是否置顶', field: 'is_top', align: 'center'},
+                {title: '正文', field: 'content', align: 'center'},
+                {title: '创建时间', field: 'create_time', align: 'center'},
+                {title: '操作', toolbar: '#role-bar', align: 'center', width: 195}
             ]
         ]
 
@@ -126,13 +116,6 @@
                 window.edit(obj)
             } else if (obj.event === 'power') {
                 window.power(obj)
-            } else if (obj.event === 'detail') {
-                window.detail(obj)
-            } else if (obj.event === 'images') {
-                window.images(obj)
-            }
-            else if (obj.event === 'container') {
-                window.container(obj)
             }
         })
 
@@ -151,15 +134,40 @@
             return false
         })
 
+        form.on('switch(role-enable)', function (obj) {
+            let operate
+            if (obj.elem.checked) {
+                operate = 'enable'
+            } else {
+                operate = 'disable'
+            }
+            let loading = layer.load()
+            $.ajax({
+                url: '/admin/notice/' + operate,
+                data: JSON.stringify({id: this.value}),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'put',
+                success: function (result) {
+                    layer.close(loading)
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000})
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000})
+                    }
+                }
+            })
+        })
 
         window.add = function () {
-            layer.open({
+            var index = layer.open({
                 type: 2,
                 title: '新增',
                 shade: 0.1,
                 area: ['500px', '500px'],
                 content: MODULE_PATH + 'add'
             })
+            layer.full(index)
         }
 
         window.power = function (obj) {
@@ -178,46 +186,16 @@
                 title: '修改',
                 shade: 0.1,
                 area: ['500px', '500px'],
-                content: MODULE_PATH + '/edit/' + obj.data['id']
+                content: MODULE_PATH + 'edit/' + obj.data['id']
             })
-        }
-        window.detail = function (obj) {
-            layer.open({
-                type: 2,
-                title: '详情',
-                shade: 0.1,
-                area: ['500px', '500px'],
-                content: MODULE_PATH + 'detail/' + obj.data['id']
-            })
-        }
-        window.images = function (obj) {
-            var index = layer.open({
-                type: 2,
-                title: '镜像',
-                shade: 0.1,
-                area: ['auto'],
-                content: MODULE_PATH + '/host/' + obj.data['id']+'/images'
-            })
-            layer.full(index)
-        }
-
-     window.container = function (obj) {
-            var index = layer.open({
-                type: 2,
-                title: '容器',
-                shade: 0.1,
-                area: ['auto'],
-                content: MODULE_PATH + '/containers/' + obj.data['id']
-            })
-            layer.full(index)
         }
 
         window.remove = function (obj) {
-            layer.confirm('确定要删除该主机', {icon: 3, title: '提示'}, function (index) {
+            layer.confirm('确定要删除该角色', {icon: 3, title: '提示'}, function (index) {
                 layer.close(index)
                 let loading = layer.load()
                 $.ajax({
-                    url: MODULE_PATH + '/host/' + obj.data['id'],
+                    url: MODULE_PATH + 'remove/' + obj.data['id'],
                     dataType: 'json',
                     type: 'delete',
                     success: function (result) {

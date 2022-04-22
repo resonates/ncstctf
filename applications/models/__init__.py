@@ -9,3 +9,4 @@ from .admin_user import User
 from .admin_user_role import user_role
 from .docker import Host
 from .ctf import Answer, ContainerResource, QuestionFile, Question, ImageResource
+from .notice import Notice

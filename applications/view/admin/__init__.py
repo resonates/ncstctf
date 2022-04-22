@@ -11,6 +11,8 @@ from applications.view.admin.monitor import admin_monitor_bp
 from applications.view.admin.task import admin_task
 from applications.view.admin.docker import docker_bp
 from applications.view.admin.timu import timu_bp
+from applications.view.admin.tiku import tiku_bp
+from applications.view.admin.notice import notice_bp
 
 
 def register_admin_views(app: Flask):
@@ -25,4 +27,5 @@ def register_admin_views(app: Flask):
     app.register_blueprint(admin_task)
     app.register_blueprint(docker_bp)
     app.register_blueprint(timu_bp)
-
+    app.register_blueprint(tiku_bp)
+    app.register_blueprint(notice_bp)

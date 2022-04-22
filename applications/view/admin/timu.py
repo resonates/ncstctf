@@ -1,12 +1,11 @@
-import json
-
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask import render_template
+from sqlalchemy import func
 
 from applications.extensions import db
-from applications.models.ctf import Question
+from applications.models.ctf import Question, Answer
 
-timu_bp= Blueprint('timu', __name__, url_prefix='/timu')
+timu_bp = Blueprint('timu', __name__, url_prefix='/timu')
 
 
 # 题目管理
@@ -14,27 +13,68 @@ timu_bp= Blueprint('timu', __name__, url_prefix='/timu')
 def main():
     return render_template('admin/timu/main.html')
 
+
+@timu_bp.route('/challenge', methods=['get'])
+def challenge_list():
+    """
+        题目列表
+    :return:
+    """
+    user = g.user
+    if user:
+        solved = [i[0] for i in
+                  db.session.query(Answer.question_id).filter(Answer.user_id == user.id,
+                                                              Answer.status == Answer.status_ok)]
+    else:
+        solved = []
+    # 每个题目的解题人数
+    solved_query = db.session.query(Answer.question_id, func.count(Answer.id)).filter(
+        Answer.status == Answer.status_ok).group_by(Answer.question_id).all()
+    solved_cnt_dict = {i[0]: i[1] for i in solved_query}
+    subjects = request.args.get("subject")
+    query = db.session.query(Question).filter(Question.active == 1)
+    if subjects:
+        query = query.filter(Question.type == subjects)
+    data = []
+    for item in query:
+        data.append({
+            "id": item.id,
+            "type": item.type,
+            "title": item.name,
+            "score": item.score,
+            "desc": item.desc,
+            "active_flag": item.active_flag,
+            "solved_cnt": solved_cnt_dict.get(item.id, 0),
+            "is_solved": bool(item.id in solved)
+        })
+    return {
+        "msg": "not data",
+        "count": data.count(),
+        "data": data}
+
+
 @timu_bp.route('/data', methods=['get'])
 def question_list():
     return {
-	"msg": "not data",
-	"count": 30,
-	"data": [{
-			"id": "1",
-			"image": "https://gw.alipayobjects.com/zos/rmsportal/gLaIAoVWTtLbBWZNYEMg.png",
-			"title": "简单sql注入",
-			"remark": "测试题",
-			"time": "未答题"
-		}, {
-			"id": "2",
-			"image": "https://gw.alipayobjects.com/zos/rmsportal/iXjVmWVHbCJAyqvDxdtx.png",
-			"title": "xss注入",
-			"remark": "测试题",
-			"time": "未答题"
-		}
-	],
-	"code": 0
-}
+        "msg": "not data",
+        "count": 30,
+        "data": [{
+            "id": "1",
+            "image": "https://gw.alipayobjects.com/zos/rmsportal/gLaIAoVWTtLbBWZNYEMg.png",
+            "title": "简单sql注入",
+            "remark": "测试题",
+            "time": "未答题"
+        }, {
+            "id": "2",
+            "image": "https://gw.alipayobjects.com/zos/rmsportal/iXjVmWVHbCJAyqvDxdtx.png",
+            "title": "xss注入",
+            "remark": "测试题",
+            "time": "未答题"
+        }
+        ],
+        "code": 0
+    }
+
 
 # @timu_bp.route('/data', methods=['get'])
 # def question_list():
