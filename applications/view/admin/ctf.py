@@ -14,6 +14,7 @@ from applications.models.ctf import QType, ImageResource, ContainerResource, Ans
 from applications.models.ctf import Question
 from applications.models.docker import Host
 from applications.models import User
+
 # from app.tasks.ctf import build_question_tar
 
 logger = logging.getLogger('app')
@@ -30,8 +31,6 @@ def question_type():
     return jsonify({
         "results": data
     })
-
-
 
 
 @bp.route('/containers/<int:container_resource>/refresh', methods=['post'])
@@ -84,20 +83,12 @@ def ctf_containers_remove(pk):
     return jsonify({"msg": "删除成功"})
 
 
-
-
-
 @bp.route('/answers/status_list', methods=['get'])
 def answer_status_list():
     """
         回答题目的类别
     """
     return jsonify({"data": list(Answer.status_choices)})
-
-
-
-
-
 
 
 @bp.route('/images', methods=['get'])
